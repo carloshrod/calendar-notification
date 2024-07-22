@@ -1,0 +1,22 @@
+.wrapper {
+  height: 100vh;
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.calendar {
+  width: 70%;
+}
+
+.notifications {
+  width: 30%;
+}
+
+.rbc-month-row {
+  cursor: pointer;
+}
+
+.rbc-button-link .rbc-row-segment {
+  cursor: default !important;
+}
