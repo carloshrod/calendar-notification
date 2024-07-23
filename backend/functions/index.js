@@ -22,9 +22,6 @@ exports.executeSendingNotifications = functions.pubsub
       0
     ).getDate();
 
-    console.log({ lastDayOfMonth });
-    console.log({ day });
-
     const notificationsRef = admin.firestore().collection("notifications");
 
     // Obtener notificaciones para el día actual
