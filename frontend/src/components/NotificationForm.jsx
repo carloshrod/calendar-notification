@@ -4,8 +4,6 @@ import { Button } from "react-bootstrap";
 export const NotificationForm = ({
   email,
   setEmail,
-  // time,
-  // setTime,
   selectedDate,
   handleSubmit,
 }) => {
@@ -19,23 +17,11 @@ export const NotificationForm = ({
         <span className="fw-semibold">Día seleccionado:</span>{" "}
         {dayjs(selectedDate).format("DD")}
       </p>
-      {/* <div className="form-group">
-        <label htmlFor="time" className="fw-semibold">
-          Hora:
-        </label>
-        <input
-          id="time"
-          type="time"
-          className="form-control mb-3"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          required
-        />
-      </div> */}
       <div className="form-group">
         <label htmlFor="email" className="fw-semibold">
           Correo Electrónico:
         </label>
+        {/* Input tipo select */}
         <input
           id="email"
           type="email"

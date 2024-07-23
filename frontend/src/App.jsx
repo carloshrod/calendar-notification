@@ -18,7 +18,6 @@ function App() {
   const [notifications, setNotifications] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  // const [time, setTime] = useState("");
   const [email, setEmail] = useState("");
 
   useEffect(() => {
@@ -45,14 +44,12 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedDate && email) {
-      // const [hour, minute] = time.split(":").map(Number);
       const notifHour = 8;
 
       const newNotification = {
         title: email,
         email,
         notifDay: Number(dayjs(selectedDate).format("DD")),
-        // time: time,
         start: dayjs(selectedDate)
           .set("hour", notifHour)
           .set("minute", 0)
@@ -94,8 +91,6 @@ function App() {
         <NotificationForm
           email={email}
           setEmail={setEmail}
-          // time={time}
-          // setTime={setTime}
           selectedDate={selectedDate}
           handleSubmit={handleSubmit}
         />
