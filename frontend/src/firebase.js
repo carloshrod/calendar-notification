@@ -12,7 +12,7 @@ import {
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_apiKey,
+  apiKey: import.meta.env.VITE_apiKey, // proccess.env.REACT_APP_apiKey
   authDomain: import.meta.env.VITE_authDomain,
   projectId: import.meta.env.VITE_projectId,
   storageBucket: import.meta.env.VITE_storageBucket,
