@@ -8,6 +8,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  where,
 } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
@@ -29,6 +30,22 @@ const notificationsCollectionRef = collection(db, "notifications");
 
 export const addNotification = async (newNotification) => {
   try {
+    const { email, notifDay } = newNotification;
+
+    // Validar si ya existe una notificación para un email en un día en específico y evitar repetirla
+    const q = query(
+      notificationsCollectionRef,
+      where("email", "==", email),
+      where("notifDay", "==", notifDay)
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      throw new Error(
+        `Ya existe una notificación para ${email} en el día ${notifDay}!`
+      );
+    }
+
     const newNotificationRef = doc(notificationsCollectionRef);
     const { id } = newNotificationRef;
 
@@ -43,6 +60,7 @@ export const addNotification = async (newNotification) => {
     return notificationToCreate;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
