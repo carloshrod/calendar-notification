@@ -8,6 +8,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
@@ -30,21 +31,8 @@ const notificationsCollectionRef = collection(db, "notifications");
 
 export const addNotification = async (newNotification) => {
   try {
-    const { email, notifDay } = newNotification;
-
-    // Validar si ya existe una notificación para un email en un día en específico y evitar repetirla
-    const q = query(
-      notificationsCollectionRef,
-      where("email", "==", email),
-      where("notifDay", "==", notifDay)
-    );
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      throw new Error(
-        `Ya existe una notificación para ${email} en el día ${notifDay}!`
-      );
-    }
+    await verifyDuplicatedEmail(newNotification);
+    await verifyDuplicatedPhoneNumber(newNotification);
 
     const newNotificationRef = doc(notificationsCollectionRef);
     const { id } = newNotificationRef;
@@ -62,6 +50,15 @@ export const addNotification = async (newNotification) => {
     console.error(error);
     throw error;
   }
+};
+
+export const updateNotification = async (notification) => {
+  await verifyDuplicatedPhoneNumber(notification);
+
+  await updateDoc(
+    doc(notificationsCollectionRef, notification.id),
+    notification
+  );
 };
 
 export const getNotification = async () => {
@@ -85,5 +82,41 @@ export const deleteNotification = async (notificationId) => {
     await deleteDoc(doc(notificationsCollectionRef, notificationId));
   } catch (error) {
     console.error(error);
+  }
+};
+
+const verifyDuplicatedEmail = async (notification) => {
+  const { email, notifDay } = notification;
+
+  // Validar si ya existe una notificación para un email en un día en específico y evitar repetirla
+  const emailQuery = query(
+    notificationsCollectionRef,
+    where("email", "==", email),
+    where("notifDay", "==", notifDay)
+  );
+  const querySnapshot = await getDocs(emailQuery);
+
+  if (!querySnapshot.empty) {
+    throw new Error(
+      `Ya existe una notificación para ${email} en el día ${notifDay}!`
+    );
+  }
+};
+
+const verifyDuplicatedPhoneNumber = async (notification) => {
+  const { email, phoneNumber } = notification;
+
+  // Validar si el phoneNumber ya está asociado a un email
+  const phoneNumberQuery = query(
+    notificationsCollectionRef,
+    where("phoneNumber", "==", phoneNumber),
+    where("email", "!=", email)
+  );
+  const phoneNumberQuerySnapshot = await getDocs(phoneNumberQuery);
+
+  if (!phoneNumberQuerySnapshot.empty) {
+    throw new Error(
+      `El número de teléfono ${phoneNumber} ya está asociado a otro email.`
+    );
   }
 };

@@ -2,10 +2,11 @@ import dayjs from "dayjs";
 import { Button } from "react-bootstrap";
 
 export const NotificationForm = ({
-  email,
-  setEmail,
+  form,
+  setForm,
   selectedDate,
   handleSubmit,
+  updatingNotification,
 }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -26,14 +27,32 @@ export const NotificationForm = ({
           id="email"
           type="email"
           className="form-control mb-3"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="email@mail.com"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
+          readOnly={updatingNotification}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="phoneNumber" className="fw-semibold">
+          Número de teléfono:
+        </label>
+        <input
+          id="phoneNumber"
+          type="text"
+          className="form-control mb-3"
+          value={form.phoneNumber}
+          placeholder="+573216549870"
+          onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
           required
         />
       </div>
       <div className="text-end">
         <Button type="submit" variant="primary">
-          Crear Evento
+          {updatingNotification
+            ? "Actualizar N° de Teléfono"
+            : "Crear Notificación"}
         </Button>
       </div>
     </form>

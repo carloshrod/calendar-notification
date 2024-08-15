@@ -1,7 +1,11 @@
 import { Button } from "react-bootstrap";
-import { TiDelete } from "react-icons/ti";
+import { TiDelete, TiEdit } from "react-icons/ti";
 
-export const Notifications = ({ notifications, handleDeleteNotification }) => {
+export const Notifications = ({
+  notifications,
+  handleDeleteNotification,
+  handleUpdateNotification,
+}) => {
   return (
     <div className="notifications">
       <h4>Notificaciones</h4>
@@ -16,17 +20,31 @@ export const Notifications = ({ notifications, handleDeleteNotification }) => {
                 <span className="fw-bold">Email: </span> {event.email}
               </p>
               <p className="m-0">
+                <span className="fw-bold">N° de teléfono: </span>{" "}
+                {event.phoneNumber}
+              </p>
+              <p className="m-0">
                 <span className="fw-bold">Día del mes: </span> {event.notifDay}
               </p>
             </div>
-            <Button
-              variant="danger"
-              size="sm"
-              className="p-0 d-flex align-items-center h-50 my-auto"
-              onClick={() => handleDeleteNotification(event.id)}
-            >
-              <TiDelete size={18} />
-            </Button>
+            <div className="d-flex flex-column">
+              <Button
+                variant="danger"
+                size="sm"
+                className="p-0 d-flex align-items-center my-auto"
+                onClick={() => handleDeleteNotification(event.id)}
+              >
+                <TiDelete size={18} />
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                className="p-0 d-flex align-items-center my-auto"
+                onClick={() => handleUpdateNotification(event.id)}
+              >
+                <TiEdit size={18} />
+              </Button>
+            </div>
           </div>
         ))
       ) : (

@@ -10,15 +10,23 @@ import {
   addNotification,
   deleteNotification,
   getNotification,
+  updateNotification,
 } from "./firebase";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+const initialForm = {
+  email: "",
+  phoneNumber: "",
+};
 
 function App() {
   const [notifications, setNotifications] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [email, setEmail] = useState("");
+  const [form, setForm] = useState(initialForm);
+  const { email, phoneNumber } = form;
+  const [updatingNotification, setUpdatingNotification] = useState(false);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -43,27 +51,36 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedDate && email) {
-      const notifHour = 8;
+    if (selectedDate && email && phoneNumber) {
+      if (!updatingNotification) {
+        const notifHour = 12;
 
-      const newNotification = {
-        title: email,
-        email,
-        notifDay: Number(dayjs(selectedDate).format("DD")),
-        start: dayjs(selectedDate)
-          .set("hour", notifHour)
-          .set("minute", 0)
-          .set("second", 0)
-          .toDate(),
-        end: dayjs(selectedDate).endOf("day").toDate(),
-        allDay: true,
-      };
+        const newNotification = {
+          title: email,
+          email,
+          phoneNumber,
+          notifDay: Number(dayjs(selectedDate).format("DD")),
+          start: dayjs(selectedDate)
+            .set("hour", notifHour)
+            .set("minute", 0)
+            .set("second", 0)
+            .toDate(),
+          end: dayjs(selectedDate).endOf("day").toDate(),
+          allDay: true,
+        };
 
-      const notificationCreated = await addNotification(newNotification);
-      setNotifications([...notifications, notificationCreated]);
-
+        const notificationCreated = await addNotification(newNotification);
+        setNotifications([...notifications, notificationCreated]);
+      } else {
+        await updateNotification(form);
+        const newData = notifications.map((notif) => {
+          return notif.id === form.id ? form : notif;
+        });
+        setNotifications(newData);
+        setUpdatingNotification(false);
+      }
       setSelectedDate(null);
-      setEmail("");
+      setForm(initialForm);
       setShowModal(false);
     }
   };
@@ -74,6 +91,23 @@ function App() {
       (notif) => notif.id !== notificactionId
     );
     setNotifications(updatedNotifications);
+    setForm(initialForm);
+  };
+
+  const handleUpdateNotification = (notificationId) => {
+    setUpdatingNotification(true);
+    const notificationToEdit = notifications.find((notif) => {
+      return notif.id === notificationId;
+    });
+    setSelectedDate(notificationToEdit.start);
+    setForm(notificationToEdit);
+    setShowModal(true);
+  };
+
+  const onHideModal = () => {
+    setShowModal(false);
+    setForm(initialForm);
+    setUpdatingNotification(false);
   };
 
   return (
@@ -86,13 +120,15 @@ function App() {
       <Notifications
         notifications={notifications}
         handleDeleteNotification={handleDeleteNotification}
+        handleUpdateNotification={handleUpdateNotification}
       />
-      <CustomModal showModal={showModal} setShowModal={setShowModal}>
+      <CustomModal showModal={showModal} onHideModal={onHideModal}>
         <NotificationForm
-          email={email}
-          setEmail={setEmail}
+          form={form}
+          setForm={setForm}
           selectedDate={selectedDate}
           handleSubmit={handleSubmit}
+          updatingNotification={updatingNotification}
         />
       </CustomModal>
     </div>

@@ -1,10 +1,10 @@
 import { Modal } from "react-bootstrap";
 
-export const CustomModal = ({ showModal, setShowModal, children }) => {
+export const CustomModal = ({ showModal, onHideModal, children }) => {
   return (
-    <Modal show={showModal} onHide={() => setShowModal(false)}>
+    <Modal show={showModal} onHide={onHideModal}>
       <Modal.Header closeButton>
-        <Modal.Title>Crear Evento</Modal.Title>
+        <Modal.Title>Notificación</Modal.Title>
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
     </Modal>
